@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdtu.dao.EmployeeMapper">
+  <resultMap id="BaseResultMap" type="com.cdtu.bean.Employee">
+    <id column="empid" jdbcType="INTEGER" property="empid" />
+    <result column="empname" jdbcType="VARCHAR" property="empname" />
+    <result column="empemail" jdbcType="VARCHAR" property="empemail" />
+    <result column="empaddr" jdbcType="VARCHAR" property="empaddr" />
+    <result column="empdepid" jdbcType="INTEGER" property="empdepid" />
+  </resultMap>
+  
+   <resultMap id="WithDeptResultMap" type="com.cdtu.bean.Employee">
+    <id column="empid" jdbcType="INTEGER" property="empid" />
+    <result column="empname" jdbcType="VARCHAR" property="empname" />
+    <result column="empemail" jdbcType="VARCHAR" property="empemail" />
+    <result column="empaddr" jdbcType="VARCHAR" property="empaddr" />
+    <result column="empdepid" jdbcType="INTEGER" property="empdepid" />
+     <!-- 指定联合查询出的部门字段的封装 -->
+    <association property="department" javaType="com.cdtu.bean.Department">
+    	<id column="depid" property="depid"/>
+    	<result column="depname" property="depname"/>
+    </association>
+  </resultMap>
+  
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    empid, empname, empemail, empaddr, empdepid
+  </sql>
+    <sql id="WithDept_Column_List">
+  	e.empid, e.empname, e.empemail, e.empaddr, e.empdepid,d.depid,d.depname
+  </sql>
+  
+  <!--模糊查询 -->
+    <select id="selectByCountryQueryModel" parameterType="com.cdtu.bean.Employee" resultMap="WithDeptResultMap">
+     select 
+    <include refid="WithDept_Column_List" />
+    FROM employee e
+		left join department d on e.`empdepid`=d.`depid`
+    <where>
+      <if test="empname != null and empname != ''">
+        empname like concat('%',concat(#{empname}, '%'))
+      </if>
+      <if test="empemail != null and empemail != ''">
+        and empemail like concat('%',concat(#{empemail}, '%'))
+      </if>
+    </where>
+
+  </select>
+  
+  
+  
+  
+  <select id="selectByExample" parameterType="com.cdtu.bean.EmployeeExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from employee
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    FROM employee e
+		left join department d on e.`empdepid`=d.`depid`
+    where empid = #{empid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from employee
+    where empid = #{empid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.cdtu.bean.EmployeeExample">
+    delete from employee
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.cdtu.bean.Employee">
+    insert into employee (empid, empname, empemail, 
+      empaddr, empdepid)
+    values (#{empid,jdbcType=INTEGER}, #{empname,jdbcType=VARCHAR}, #{empemail,jdbcType=VARCHAR}, 
+      #{empaddr,jdbcType=VARCHAR}, #{empdepid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cdtu.bean.Employee">
+    insert into employee
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="empid != null">
+        empid,
+      </if>
+      <if test="empname != null">
+        empname,
+      </if>
+      <if test="empemail != null">
+        empemail,
+      </if>
+      <if test="empaddr != null">
+        empaddr,
+      </if>
+      <if test="empdepid != null">
+        empdepid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="empid != null">
+        #{empid,jdbcType=INTEGER},
+      </if>
+      <if test="empname != null">
+        #{empname,jdbcType=VARCHAR},
+      </if>
+      <if test="empemail != null">
+        #{empemail,jdbcType=VARCHAR},
+      </if>
+      <if test="empaddr != null">
+        #{empaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="empdepid != null">
+        #{empdepid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+     <!-- 查询员工同时带部门信息 -->
+  <select id="selectByExampleWithDept" resultMap="WithDeptResultMap">
+	   select
+	    <if test="distinct">
+	      distinct
+	    </if>
+	    <include refid="WithDept_Column_List" />
+		FROM employee e
+		left join department d on e.`empdepid`=d.`depid`
+	    <if test="_parameter != null">
+	      <include refid="Example_Where_Clause" />
+	    </if>
+	    <if test="orderByClause != null">
+	      order by ${orderByClause}
+	    </if>
+  </select>
+  <select id="selectByPrimaryKeyWithDept" resultMap="WithDeptResultMap">
+   	select 
+    <include refid="WithDept_Column_List" />
+    FROM employee e
+	left join department d on e.`empdepid`=d.`depid`
+    where empdepid = #{empId,jdbcType=INTEGER}
+  </select>
+  
+  
+  
+  <select id="countByExample" parameterType="com.cdtu.bean.EmployeeExample" resultType="java.lang.Long">
+    select count(*) from employee
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update employee
+    <set>
+      <if test="record.empid != null">
+        empid = #{record.empid,jdbcType=INTEGER},
+      </if>
+      <if test="record.empname != null">
+        empname = #{record.empname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.empemail != null">
+        empemail = #{record.empemail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.empaddr != null">
+        empaddr = #{record.empaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.empdepid != null">
+        empdepid = #{record.empdepid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update employee
+    set empid = #{record.empid,jdbcType=INTEGER},
+      empname = #{record.empname,jdbcType=VARCHAR},
+      empemail = #{record.empemail,jdbcType=VARCHAR},
+      empaddr = #{record.empaddr,jdbcType=VARCHAR},
+      empdepid = #{record.empdepid,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cdtu.bean.Employee">
+    update employee
+    <set>
+      <if test="empname != null">
+        empname = #{empname,jdbcType=VARCHAR},
+      </if>
+      <if test="empemail != null">
+        empemail = #{empemail,jdbcType=VARCHAR},
+      </if>
+      <if test="empaddr != null">
+        empaddr = #{empaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="empdepid != null">
+        empdepid = #{empdepid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where empid = #{empid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cdtu.bean.Employee">
+    update employee
+    set empname = #{empname,jdbcType=VARCHAR},
+      empemail = #{empemail,jdbcType=VARCHAR},
+      empaddr = #{empaddr,jdbcType=VARCHAR},
+      empdepid = #{empdepid,jdbcType=INTEGER}
+    where empid = #{empid,jdbcType=INTEGER}
+  </update>
+</mapper>
