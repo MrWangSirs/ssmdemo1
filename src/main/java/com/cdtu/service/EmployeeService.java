@@ -61,4 +61,7 @@ public class EmployeeService {
 		criteria.andEmpidIn(ids);
 		employeeMapper.deleteByExample(example);
 	}
+	public void addemp(Employee employee){
+		employeeMapper.insert(employee);
+	}
 }

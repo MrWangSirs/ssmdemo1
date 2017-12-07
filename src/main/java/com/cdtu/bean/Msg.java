@@ -1,5 +1,6 @@
 package com.cdtu.bean;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import java.util.Map;
  * @author lfy
  * 
  */
-public class Msg {
+public class Msg implements Serializable{
 	//状态码   100-成功    200-失败
 	private int code;
 	//提示信息

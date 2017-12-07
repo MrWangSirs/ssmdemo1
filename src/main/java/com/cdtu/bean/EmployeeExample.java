@@ -1,10 +1,16 @@
 package com.cdtu.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeExample {
-    protected String orderByClause;
+public class EmployeeExample implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	protected String orderByClause;
 
     protected boolean distinct;
 

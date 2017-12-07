@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cdtu.bean.Employee;
 import com.cdtu.bean.Msg;
+import com.cdtu.cache.GetCache;
 import com.cdtu.service.EmployeeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -56,6 +58,7 @@ public class EmployeeController {
 	@ApiIgnore
 	@RequestMapping("/allemps")
 	@ResponseBody
+	@GetCache(name="allemps",value="pn")
 	public Msg getEmpsWithJson(
 			@RequestParam(value = "pn", defaultValue = "1") Integer pn,@RequestParam(value="empname",defaultValue="") String empname
 			,@RequestParam(value="empemail",defaultValue="") String empemail,HttpServletResponse response) {
@@ -179,6 +182,15 @@ public class EmployeeController {
 		}
 		return Msg.success();
 	}
-	
-	
+	/*
+	 * Ôö¼Ó
+	 */
+	@RequestMapping(value="/addemp",method=RequestMethod.POST)
+	@ResponseBody 
+	public Msg addemp(Employee employee){
+
+		System.out.println(employee);
+//		employeeService.addemp(employee);
+		return  Msg.success();
+	}
 }

@@ -223,10 +223,13 @@
 				data:{"pn":pn,"empname":empname,empemail:empemail}, 
 				type:"GET",
 				success:function(result){
+					
+					
 					//console.log(result);
 					//1、解析并显示员工数据
 					build_emps_table(result);
 					//2、解析并显示分页信息
+					
 					build_page_info(result);
 					//3、解析显示分页条数据
 					build_page_nav(result);
@@ -277,6 +280,7 @@
 		//解析显示分页信息
 		function build_page_info(result){
 			$("#page_info_area").empty();
+		
 			$("#page_info_area").append("当前"+result.extend.pageInfo.pageNum+"页,总"+
 					result.extend.pageInfo.pages+"页,总"+
 					result.extend.pageInfo.total+"条记录");
@@ -316,6 +320,7 @@
 					to_page(result.extend.pageInfo.pageNum +1,empname,empemail);
 				});
 				lastPageLi.click(function(){
+					
 					to_page(result.extend.pageInfo.pages,empname,empemail);
 				});
 			}
@@ -456,7 +461,7 @@
 			
 			//2、发送ajax请求保存员工
 			$.ajax({
-				url:"${APP_PATH}/emp",
+				url:"${APP_PATH}/addemp",
 				type:"POST",
 				data:$("#empAddModal form").serialize(),
 				success:function(result){

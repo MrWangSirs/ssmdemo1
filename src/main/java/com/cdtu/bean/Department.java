@@ -1,7 +1,14 @@
 package com.cdtu.bean;
 
-public class Department {
-    private Integer depid;
+import java.io.Serializable;
+
+public class Department implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Integer depid;
 
     private String depname;
 

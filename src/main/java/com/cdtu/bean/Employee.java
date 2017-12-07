@@ -1,9 +1,14 @@
 package com.cdtu.bean;
 
+import java.io.Serializable;
 
+public class Employee implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-public class Employee {
-    private Integer empid;
+	private Integer empid;
 
     private String empname;
 
